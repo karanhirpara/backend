@@ -20,7 +20,8 @@ app.use(express.json({limit:"16kb"}));
 app.use(express.urlencoded());
 app.use(express.static("public"));
 app.use(cookieParser());
-app.use(cors({ origin: "http://localhost:8080",  // your frontend URL
+app.use(cors({ origin:[ "http://localhost:8080", 
+      "https://frontend-eight-vert-tgiv7r192a.vercel.app"],// your frontend URL
   credentials: true,    }));
 import http from 'http';
 const server = http.createServer(app);
