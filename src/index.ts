@@ -59,4 +59,4 @@ app.get('/registrationcheck/:id',verifyuser,checkRegistration)
 app.delete('/registrationcancel/:id',verifyuser,cancelRegistration)
 app.get("/allregistration",verifyuser,getAllRegistrations)
 
-server.listen(3000,()=>console.log("port 3000"));
+server.listen(port,()=>console.log("port 3000"));

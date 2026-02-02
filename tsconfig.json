@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "NodeNext",     // or "ESNext" if you know what you're doing
-    "moduleResolution": "NodeNext",
+    "target": "ES2020",
+    "module": "ESNext",
     "outDir": "dist",
     "rootDir": "src",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  }
 }
