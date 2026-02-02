@@ -5,7 +5,6 @@
 
 **Filename:** `backend/README.md`
 
-```markdown
 # Event Management Backend
 
 This is the backend API for the Event Management system built with Node.js, Express, and MongoDB.
