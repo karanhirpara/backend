@@ -25,5 +25,5 @@ This is the backend API for the Event Management system built with Node.js, Expr
 ## Setup & Installation
 1. Clone the repository:
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/karanhirpara/backend.git
    cd backend
