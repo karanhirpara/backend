@@ -21,7 +21,8 @@ This is the backend API for the Event Management system built with Node.js, Expr
 - npm or yarn
 - MongoDB Atlas / Local MongoDB instance
 - Optional: Cloudinary account (for event images)
-
+## Live Backend URL
+https://eventbackend-vgjk.onrender.com
 ## Setup & Installation
 1. Clone the repository:
    ```bash
