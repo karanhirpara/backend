@@ -6,64 +6,47 @@ import { Request, Response } from "express";
 import User from "../../model/user.js";
 const refreshTokengen = async (req: Request, res: Response) => {
   try {
-    
-    const refreshtoken = req.cookies?.refreshToken || req.body.refreshToken;
-    if (!refreshtoken) {
-      throw new Error("Refresh token is required");
+    const refreshToken = req.cookies?.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Refresh token required" });
     }
 
-    
-    if (!process.env.ACCESS_TOKEN_SECRET) {
-      throw new Error("ACCESS_TOKEN_SECRET is not defined in environment variables");
+    if (!process.env.REFRESH_TOKEN_SECRET) {
+      throw new Error("REFRESH_TOKEN_SECRET missing");
     }
 
-    // ✅ Verify token
-    const decrypt = jwt.verify(
-      refreshtoken,
-      process.env.REFRESH_TOKEN_SECRET!
+    const payload = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET
     ) as JwtPayload & { _id: string };
 
-    if (!decrypt || !decrypt._id) {
-      throw new Error("Invalid refresh token");
+    const user = await User.findById(payload._id);
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(401).json({ message: "Invalid refresh token" });
     }
 
-    // ✅ Always await mongoose calls
-    const user = await User.findById(decrypt._id);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    const newAccessToken = await user.generateAccessToken();
+    const newRefreshToken = await user.generateRefreshToken();
 
-    if (refreshtoken !== user.refreshToken) {
-      throw new Error("Refresh token does not match");
-    }
-
-    const newrefreshtoken = await user.generateRefreshToken();
-    const accesstoken = await user.generateAccessToken();
-
-    user.refreshToken = newrefreshtoken;
+    user.refreshToken = newRefreshToken;
     await user.save({ validateBeforeSave: false });
 
-    const userview = await User.findById(user._id).select(
-      "-refreshToken -password"
-    );
-
-    const options = {
+    const cookieOptions = {
       httpOnly: true,
-      secure: true, // ⚠️ only works over HTTPS
+      secure: true,
+       sameSite: "none" as const
     };
 
     return res
+      .cookie("accessToken", newAccessToken, cookieOptions)
+      .cookie("refreshToken", newRefreshToken, cookieOptions)
       .status(200)
-      .cookie("AccessToken", accesstoken, options)
-      .cookie("RefreshToken", newrefreshtoken, options)
-      .json({
-        newrefreshtoken,
-        accesstoken,
-        userview,
-      });
-  } catch (err: any) {
-    return res.status(401).json({ error: err.message });
+      .json({ message: "Token refreshed" });
+
+  } catch {
+    return res.status(401).json({ message: "Refresh failed" });
   }
 };
+
 
 export default refreshTokengen;
