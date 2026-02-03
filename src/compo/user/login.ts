@@ -45,12 +45,13 @@ const userlogin = async (req: any, res: any) => {
       "-password -refreshToken"
     );
 
-   const cookieOptions = {
+  const cookieOptions = {
   httpOnly: true,
-  secure: false,
-   sameSite: "lax",
+  secure: true,        // REQUIRED in production (HTTPS)
+  sameSite: "none",    // REQUIRED for cross-site cookies
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
+
 
 return res
   .status(200)
