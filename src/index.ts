@@ -17,12 +17,22 @@ import {registerForEvent,checkRegistration,cancelRegistration,getAllRegistration
 const port = Number(process.env.PORT) || 3000
 const app = express()
 app.use(express.json({limit:"16kb"}));
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+
+
+
+
+
 app.use(express.static("public"));
 app.use(cookieParser());
-app.use(cors({ origin:[ "http://localhost:8080", 
-      "https://frontend-eight-vert-tgiv7r192a.vercel.app"],// your frontend URL
-  credentials: true,    }));
+app.use(cors({
+  origin: [
+    "http://localhost:8080",
+    "https://frontend-eight-vert-tgiv7r192a.vercel.app"
+  ],
+  credentials: true,
+}));
+
 import http from 'http';
 const server = http.createServer(app);
 console.log("port",port)
@@ -53,7 +63,7 @@ app.get("/event/:id", getEventById);
 app.post('/user/registration',userregistration);
 app.post('/user/login',userlogin);
 app.get('/events/host', verifyuser,getEventByHost);
-app.delete('/eventdelete/:id', deleteEventById);
+app.delete('/eventdelete/:id',verifyuser, deleteEventById);
 
 app.post('/eventregistion',verifyuser,registerForEvent);
 app.get('/registrationcheck/:id',verifyuser,checkRegistration)
